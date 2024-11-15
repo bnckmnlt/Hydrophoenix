@@ -1,0 +1,30 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-hydroponicsapp-dev-9b17b-authRole",
+      "UnauthRoleArn": "arn:aws:iam::585008086560:role/amplify-hydroponicsapp-dev-9b17b-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::585008086560:role/amplify-hydroponicsapp-dev-9b17b-authRole",
+      "Region": "ap-southeast-1",
+      "DeploymentBucketName": "amplify-hydroponicsapp-dev-9b17b-deployment",
+      "UnauthRoleName": "amplify-hydroponicsapp-dev-9b17b-unauthRole",
+      "StackName": "amplify-hydroponicsapp-dev-9b17b",
+      "StackId": "arn:aws:cloudformation:ap-southeast-1:585008086560:stack/amplify-hydroponicsapp-dev-9b17b/85e42980-95b0-11ef-b392-0a69b1b0af6d",
+      "AmplifyAppId": "d2k9yndk6t8954",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-hydroponicsapp-dev-9b17b-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "function": {
+        "hydroponicsappdf6420bc": {
+          "deploymentBucketName": "amplify-hydroponicsapp-dev-9b17b-deployment",
+          "s3Key": "amplify-builds/hydroponicsappdf6420bc-70446570355255315179-build.zip"
+        }
+      },
+      "auth": {
+        "hydroponicsapp": {}
+      },
+      "api": {
+        "api": {}
+      }
+    }
+  }
+}
