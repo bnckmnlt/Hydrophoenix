@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/domain/entities/metrics.dart';
 import 'package:hydroponics_app/features/dashboard/metrics/presentation/widgets/MetricsChart.dart';
 
 class DataChartCard extends StatefulWidget {
   final String title;
   final List<Map<String, Color>> labels;
   final List<String> sections;
+  final List<List<Metrics>> readingsData;
 
   const DataChartCard({
     super.key,
     required this.title,
     required this.labels,
     required this.sections,
+    required this.readingsData,
   });
 
   @override
@@ -21,6 +24,7 @@ class _DataChartCardState extends State<DataChartCard> {
   late String title;
   late List<Map<String, Color>> labels;
   late List<String> sections;
+  late List<List<Metrics>> readingsData;
 
   @override
   void initState() {
@@ -28,6 +32,7 @@ class _DataChartCardState extends State<DataChartCard> {
     title = widget.title;
     labels = widget.labels;
     sections = widget.sections;
+    readingsData = widget.readingsData;
   }
 
   @override
@@ -70,18 +75,19 @@ class _DataChartCardState extends State<DataChartCard> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  parameterSection(section, labels[index]),
+                  parameterSection(section, labels[index], readingsData[index]),
                   const SizedBox(height: 12),
                 ],
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
     );
   }
 
-  Widget parameterSection(String title, Map<String, Color> labelItems) {
+  Widget parameterSection(
+      String title, Map<String, Color> labelItems, List<Metrics> data) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,7 +104,8 @@ class _DataChartCardState extends State<DataChartCard> {
           labelItems.keys.toList(),
           labelItems.values.toList(),
         ),
-        const MetricsChart(),
+        if (data.isEmpty) const Center(child: CircularProgressIndicator()),
+        if (data.isNotEmpty) MetricsChart(data: data),
       ],
     );
   }

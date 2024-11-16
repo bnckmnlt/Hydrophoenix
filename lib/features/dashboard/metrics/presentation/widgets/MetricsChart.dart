@@ -1,20 +1,40 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/domain/entities/metrics.dart';
+import 'package:intl/intl.dart'; // For date formatting
 
 class MetricsChart extends StatefulWidget {
-  const MetricsChart({super.key});
+  final List<Metrics> data;
+
+  const MetricsChart({
+    super.key,
+    required this.data,
+  });
 
   @override
   State<MetricsChart> createState() => _MetricsChartState();
 }
 
 class _MetricsChartState extends State<MetricsChart> {
+  late List<Metrics> chartData;
+
   List<Color> gradientColors = [
     Colors.blue,
     Colors.blueAccent,
   ];
 
   bool showAvg = false;
+
+  String formatDate(DateTime date) {
+    return DateFormat('MMM dd').format(date);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    chartData = widget.data;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +50,7 @@ class _MetricsChartState extends State<MetricsChart> {
               bottom: 12,
             ),
             child: LineChart(
-              showAvg ? avgData() : mainData(),
+              showAvg ? avgData() : mainData(chartData),
             ),
           ),
         ),
@@ -57,54 +77,78 @@ class _MetricsChartState extends State<MetricsChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 16,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
+    final DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+    final String formattedDate = formatDate(date);
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: text,
+      child: Text(
+        formattedDate,
+        style: const TextStyle(fontSize: 12, color: Colors.white),
+      ),
     );
   }
 
+  // Left titles (dynamic based on min/max values)
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 14,
-    );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '10K';
-        break;
-      case 3:
-        text = '30k';
-        break;
-      case 5:
-        text = '50k';
-        break;
-      default:
-        return Container();
+    final style = TextStyle(fontSize: 14, color: Colors.white);
+
+    // Get the max and min Y values from the data, add a fallback if empty
+    double minY = widget.data.isNotEmpty
+        ? widget.data
+            .map((metric) => metric.value)
+            .reduce((a, b) => a < b ? a : b)
+        : 0.0;
+    double maxY = widget.data.isNotEmpty
+        ? widget.data
+            .map((metric) => metric.value)
+            .reduce((a, b) => a > b ? a : b)
+        : 100.0; // Default to a reasonable max value
+
+    // Calculate the range and intervals
+    double range = maxY - minY;
+    double interval = (range / 5).ceilToDouble();
+
+    // If the value is at one of the intervals, display it on the axis
+    if (value % interval == 0) {
+      return Text(value.toStringAsFixed(0), style: style);
+    } else {
+      return Container(); // Hide labels in between intervals
+    }
+  }
+
+  // Convert metrics to FlSpots using createdAt (timestamp) and value
+  List<FlSpot> _convertMetricsToFlSpots(List<Metrics> data) {
+    return data.map((metric) {
+      double x =
+          metric.createdAt.millisecondsSinceEpoch.toDouble(); // Use timestamp
+      double y = metric.value;
+
+      return FlSpot(x, y);
+    }).toList();
+  }
+
+  LineChartData mainData(List<Metrics> data) {
+    if (data.isEmpty) {
+      return LineChartData(
+        gridData: FlGridData(show: true),
+        titlesData: FlTitlesData(show: true),
+        borderData: FlBorderData(show: true),
+        minX: 0,
+        maxX: 1,
+        minY: 0,
+        maxY: 100,
+        // Default fallback range
+        lineBarsData: [],
+      );
     }
 
-    return Text(text, style: style, textAlign: TextAlign.left);
-  }
+    List<FlSpot> spots = _convertMetricsToFlSpots(data);
 
-  LineChartData mainData() {
+    // Get the max and min Y values from the data
+    double minY = spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
+    double maxY = spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
+
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -155,21 +199,13 @@ class _MetricsChartState extends State<MetricsChart> {
           color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         ),
       ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
+      minX: spots.isEmpty ? 0 : spots.first.x,
+      maxX: spots.isEmpty ? 11 : spots.last.x,
+      minY: minY,
+      maxY: maxY,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
-          ],
+          spots: spots,
           isCurved: true,
           gradient: LinearGradient(
             colors: gradientColors,
@@ -276,11 +312,9 @@ class _MetricsChartState extends State<MetricsChart> {
             gradient: LinearGradient(
               colors: [
                 ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
+                    .lerp(0.2)!,
                 ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
+                    .lerp(0.2)!,
               ],
             ),
           ),

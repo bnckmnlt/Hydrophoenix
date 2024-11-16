@@ -7,6 +7,11 @@ import 'package:hydroponics_app/features/dashboard/logs/data/repositories/logs_r
 import 'package:hydroponics_app/features/dashboard/logs/domain/repository/logs_repository.dart';
 import 'package:hydroponics_app/features/dashboard/logs/domain/usecases/fetch_logs.dart';
 import 'package:hydroponics_app/features/dashboard/logs/presentation/bloc/logs_bloc.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/data/datasources/metrics_remote_data_source.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/data/repositories/metrics_repository_impl.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/domain/repository/metrics_repository.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/domain/usecases/fetch_metrics.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/presentation/bloc/metrics_bloc.dart';
 import 'package:hydroponics_app/mqtt_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,6 +19,7 @@ final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
   _initLogs();
+  _initMetrics();
 
   await dotenv.load(fileName: ".env");
 
@@ -54,6 +60,30 @@ void _initLogs() {
     ..registerLazySingleton(
       () => LogsBloc(
         fetchLogs: serviceLocator(),
+      ),
+    );
+}
+
+void _initMetrics() {
+  serviceLocator
+    ..registerFactory<MetricsRemoteDataSource>(
+      () => MetricsRemoteDataSourceImpl(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory<MetricsRepository>(
+      () => MetricsRepositoryImpl(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(
+      () => FetchMetrics(
+        serviceLocator(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => MetricsBloc(
+        fetchMetrics: serviceLocator(),
       ),
     );
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydroponics_app/core/theme/theme.dart';
 import 'package:hydroponics_app/features/dashboard/layout_page.dart';
 import 'package:hydroponics_app/features/dashboard/logs/presentation/bloc/logs_bloc.dart';
+import 'package:hydroponics_app/features/dashboard/metrics/presentation/bloc/metrics_bloc.dart';
 import 'package:hydroponics_app/init_dependencies.dart';
 
 Future<void> main() async {
@@ -14,6 +15,9 @@ Future<void> main() async {
     providers: [
       BlocProvider(
         create: (_) => serviceLocator<LogsBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<MetricsBloc>(),
       ),
     ],
     child: const MyApp(),

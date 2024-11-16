@@ -11,7 +11,7 @@ class LogsModel extends Logs {
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,
-      'severity': severity.toString().split('.').last, // Convert enum to string
+      'severity': severity.toString().split('.').last,
       'message': message,
       'created_at': createdAt.toIso8601String(),
     };

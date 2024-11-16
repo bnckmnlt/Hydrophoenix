@@ -13,7 +13,7 @@ class LogsRepositoryImpl implements LogsRepository {
   @override
   Future<Either<Failure, Stream<List<Logs>>>> fetchAllLogs() async {
     try {
-      final logsData = await remoteDataSource.fetchLogs();
+      final logsData = remoteDataSource.fetchLogs();
 
       return right(logsData);
     } on ServerException catch (e) {
