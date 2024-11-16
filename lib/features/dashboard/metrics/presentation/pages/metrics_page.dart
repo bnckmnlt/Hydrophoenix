@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydroponics_app/features/dashboard/metrics/presentation/bloc/metrics_bloc.dart';
@@ -40,7 +41,7 @@ List<String> reservoirSections = [
 ];
 
 class MetricsPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (_) => MetricsPage());
+  static route() => MaterialPageRoute(builder: (_) => const MetricsPage());
 
   const MetricsPage({super.key});
 
@@ -72,27 +73,63 @@ class _MetricsPageState extends State<MetricsPage> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: BlocBuilder<MetricsBloc, MetricsState>(
+            child: BlocConsumer<MetricsBloc, MetricsState>(
+              listener: (context, state) {
+                if (state is MetricsLoading) {
+                } else if (state is MetricsFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Error: ${state.message}")),
+                  );
+                }
+              },
               builder: (context, state) {
                 if (state is MetricsLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is MetricsDisplaySuccess) {
                   final combinedMetrics = state.combinedMetrics;
 
-                  if (combinedMetrics.isEmpty) {
-                    return const Center(child: Text("No Data Available"));
-                  }
-
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Metrics",
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.025,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Metrics",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.025,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                            child: CupertinoButton(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 1.0, horizontal: 1.5),
+                              child: const Icon(CupertinoIcons.refresh),
+                              onPressed: () {
+                                setState(() {
+                                  context
+                                      .read<MetricsBloc>()
+                                      .add(MetricsFetchMetrics(tables: const [
+                                        "box_dewpoint",
+                                        "box_humidity",
+                                        "box_pressure",
+                                        "box_temperature",
+                                        "water_temperature",
+                                        "water_level"
+                                      ]));
+                                });
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 24),
                       DataChartCard(

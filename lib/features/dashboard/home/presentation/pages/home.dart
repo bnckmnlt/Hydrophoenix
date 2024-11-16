@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage>
               getSelectedView(
                 mqttService,
               ),
-              QuickControls(),
+              const QuickControls(),
             ],
           ),
         ),
@@ -180,15 +180,15 @@ class _HomePageState extends State<HomePage>
       );
     } else if (isSelected[1]) {
       return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         color: Colors.green.shade100,
-        child: Text("Weekly View", style: TextStyle(fontSize: 24)),
+        child: const Text("Weekly View", style: TextStyle(fontSize: 24)),
       );
     } else {
       return Container(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         color: Colors.orange.shade100,
-        child: Text("Monthly View", style: TextStyle(fontSize: 24)),
+        child: const Text("Monthly View", style: TextStyle(fontSize: 24)),
       );
     }
   }

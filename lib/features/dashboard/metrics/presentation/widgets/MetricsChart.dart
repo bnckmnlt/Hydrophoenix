@@ -91,7 +91,7 @@ class _MetricsChartState extends State<MetricsChart> {
 
   // Left titles (dynamic based on min/max values)
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    final style = TextStyle(fontSize: 14, color: Colors.white);
+    const style = TextStyle(fontSize: 14, color: Colors.white);
 
     // Get the max and min Y values from the data, add a fallback if empty
     double minY = widget.data.isNotEmpty
@@ -131,8 +131,8 @@ class _MetricsChartState extends State<MetricsChart> {
   LineChartData mainData(List<Metrics> data) {
     if (data.isEmpty) {
       return LineChartData(
-        gridData: FlGridData(show: true),
-        titlesData: FlTitlesData(show: true),
+        gridData: const FlGridData(show: true),
+        titlesData: const FlTitlesData(show: true),
         borderData: FlBorderData(show: true),
         minX: 0,
         maxX: 1,

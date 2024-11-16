@@ -7,7 +7,7 @@ class BoxConditionCard extends StatelessWidget {
   final Stream<String>? humidityDataStream;
   final Stream<String>? pressureDataStream;
 
-  BoxConditionCard({
+  const BoxConditionCard({
     super.key,
     required this.tempDataStream,
     required this.humidityDataStream,

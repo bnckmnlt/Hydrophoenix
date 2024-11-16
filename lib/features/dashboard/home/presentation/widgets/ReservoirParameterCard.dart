@@ -139,7 +139,7 @@ class ReservoirParameterCard extends StatelessWidget {
                                         final temperature = data;
 
                                         return Text(
-                                          '${temperature.toStringAsFixed(2)}',
+                                          temperature.toStringAsFixed(2),
                                           style: GoogleFonts.phudu(
                                             textStyle: const TextStyle(
                                               fontSize: 28,

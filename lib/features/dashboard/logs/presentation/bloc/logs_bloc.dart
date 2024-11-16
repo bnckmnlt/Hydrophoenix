@@ -20,11 +20,15 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
       res.fold(
         (failure) => emit(LogsFailure(failure.message)),
         (logsStream) async {
-          await emit.forEach<List<Logs>>(
-            logsStream,
-            onData: (logs) => LogsDisplaySuccess(logs),
-            onError: (error, stackTrace) => LogsFailure(error.toString()),
-          );
+          try {
+            await emit.forEach<List<Logs>>(
+              logsStream,
+              onData: (logs) => LogsDisplaySuccess(logs),
+              onError: (error, stackTrace) => LogsFailure(error.toString()),
+            );
+          } catch (error, stackTrace) {
+            emit(LogsFailure('Unexpected error: $error'));
+          }
         },
       );
     });

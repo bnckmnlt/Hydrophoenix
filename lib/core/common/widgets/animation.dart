@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class BounceFromBottomAnimation extends StatefulWidget {
   const BounceFromBottomAnimation(
-      {Key? key, required this.child, required this.delay});
+      {super.key, required this.child, required this.delay});
 
   final Widget child;
   final double delay;

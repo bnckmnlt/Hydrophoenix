@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SetupPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (_) => SetupPage());
+  static route() => MaterialPageRoute(builder: (_) => const SetupPage());
 
   const SetupPage({super.key});
 

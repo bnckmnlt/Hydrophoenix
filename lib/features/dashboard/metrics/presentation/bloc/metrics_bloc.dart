@@ -36,7 +36,7 @@ class MetricsBloc extends Bloc<MetricsEvent, MetricsState> {
         await Future.wait(fetchTasks);
 
         emit(MetricsDisplaySuccess(combinedData));
-      } catch (e, stackTrace) {
+      } catch (e) {
         emit(MetricsFailure("Unexpected error: $e"));
       }
     });

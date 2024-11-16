@@ -24,7 +24,7 @@ class WaterParameterCard extends StatelessWidget {
         color: Theme.of(context).colorScheme.secondary,
       ),
       child: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceAround,

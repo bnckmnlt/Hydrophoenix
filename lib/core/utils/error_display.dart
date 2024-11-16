@@ -34,6 +34,5 @@ class ErrorDisplay extends StatelessWidget {
         ],
       ),
     );
-    ;
   }
 }

@@ -13,7 +13,7 @@ import 'package:hydroponics_app/features/dashboard/logs/presentation/widgets/Log
 enum LogSeverityFilter { all, log, error, warning }
 
 class LogsPage extends StatefulWidget {
-  static route() => MaterialPageRoute(builder: (_) => LogsPage());
+  static route() => MaterialPageRoute(builder: (_) => const LogsPage());
 
   const LogsPage({super.key});
 

@@ -71,7 +71,7 @@ class _LogTileState extends State<LogTile> {
                         scrollDirection: Axis.horizontal,
                         child: Text(
                           widget.message,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: "Red Hat Mono",
                             fontSize: 12,
                             letterSpacing: 0.025,
