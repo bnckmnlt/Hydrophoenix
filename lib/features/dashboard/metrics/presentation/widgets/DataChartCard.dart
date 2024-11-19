@@ -7,6 +7,7 @@ class DataChartCard extends StatefulWidget {
   final List<Map<String, Color>> labels;
   final List<String> sections;
   final List<List<Metrics>> readingsData;
+  final List<List<Color>> chartColors;
 
   const DataChartCard({
     super.key,
@@ -14,6 +15,7 @@ class DataChartCard extends StatefulWidget {
     required this.labels,
     required this.sections,
     required this.readingsData,
+    required this.chartColors,
   });
 
   @override
@@ -75,7 +77,12 @@ class _DataChartCardState extends State<DataChartCard> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  parameterSection(section, labels[index], readingsData[index]),
+                  parameterSection(
+                    section,
+                    labels[index],
+                    readingsData[index],
+                    widget.chartColors[index],
+                  ),
                   const SizedBox(height: 12),
                 ],
               );
@@ -86,54 +93,40 @@ class _DataChartCardState extends State<DataChartCard> {
     );
   }
 
-  Widget parameterSection(
-      String title, Map<String, Color> labelItems, List<Metrics> data) {
+  Widget parameterSection(String title, Map<String, Color> labelItems,
+      List<Metrics> data, List<Color> gradientColors) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.025,
-          ),
-        ),
-        const SizedBox(height: 12),
-        chartLabel(
-          labelItems.keys.toList(),
-          labelItems.values.toList(),
-        ),
-        if (data.isEmpty) const Center(child: CircularProgressIndicator()),
-        if (data.isNotEmpty) MetricsChart(data: data),
-      ],
-    );
-  }
-
-  Widget chartLabel(List<String> labels, List<Color> colors) {
-    return Row(
-      children: labels.asMap().entries.map((entry) {
-        int index = entry.key;
-        String item = entry.value;
-
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
-          child: Row(
-            children: [
-              Container(
-                height: 13,
-                width: 27,
-                decoration: BoxDecoration(
-                  color: colors[index],
-                  borderRadius: BorderRadius.circular(20),
-                ),
+        Row(
+          children: [
+            Container(
+              height: 13,
+              width: 27,
+              decoration: BoxDecoration(
+                color: labelItems.values.first,
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(width: 8),
-              Text(item),
-            ],
+            ),
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.025,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        if (data.isEmpty) const Center(child: CircularProgressIndicator()),
+        if (data.isNotEmpty)
+          MetricsChart(
+            data: data,
+            gradientColors: gradientColors,
           ),
-        );
-      }).toList(),
+      ],
     );
   }
 }

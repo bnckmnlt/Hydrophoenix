@@ -12,14 +12,13 @@ extension ShowSnackbar on BuildContext {
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: Colors.white,
-          letterSpacing: -0.4,
         ),
       ),
       padding: const EdgeInsets.symmetric(
         vertical: 6.2,
         horizontal: 12.0,
       ),
-      backgroundColor: Colors.grey.shade800,
+      backgroundColor: backgroundColor ?? Colors.grey.shade800,
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),

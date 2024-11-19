@@ -24,12 +24,10 @@ class _HomePageState extends State<HomePage>
   late MqttService mqttService;
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     mqttService = GetIt.I<MqttService>();
@@ -46,63 +44,18 @@ class _HomePageState extends State<HomePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: ["Live", "Weekly", "Monthly"]
-                      .asMap()
-                      .entries
-                      .map(
-                        (entry) => GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              for (int i = 0; i < isSelected.length; i++) {
-                                isSelected[i] = i == entry.key;
-                              }
-                            });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6.0, vertical: 4.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: isSelected[entry.key]
-                                      ? Colors.blueAccent.shade400
-                                      : Theme.of(context).colorScheme.outline,
-                                ),
-                                color: isSelected[entry.key]
-                                    ? Colors.blueAccent.shade400
-                                    : Colors.transparent,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                  horizontal: 32.0,
-                                ),
-                                child: Text(
-                                  entry.value,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.025,
-                                    fontSize: 16.0,
-                                    color: isSelected[entry.key]
-                                        ? Theme.of(context).colorScheme.surface
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .surfaceDim,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  "Current Readings",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.025,
+                  ),
                 ),
               ),
+              const SizedBox(height: 20),
               getSelectedView(
                 mqttService,
               ),

@@ -24,7 +24,10 @@ class MqttService extends ChangeNotifier {
     'feedback/ec',
     'feedback/tds',
     'control/waterPump',
+    'control/waterPump/pump1',
+    'control/waterPump/pump2',
     'control/lights',
+    'control/lights/schedule',
     'control/misting',
     'control/coolingSystem',
   ];
@@ -51,6 +54,8 @@ class MqttService extends ChangeNotifier {
       StreamController<bool>.broadcast();
   final StreamController<bool> _lightsController =
       StreamController<bool>.broadcast();
+  final StreamController<String> _lightsScheduleController =
+      StreamController<String>.broadcast();
   final StreamController<bool> _mistingController =
       StreamController<bool>.broadcast();
   final StreamController<bool> _coolingSystemController =
@@ -67,6 +72,7 @@ class MqttService extends ChangeNotifier {
   Stream<String> get tdsStream => _tdsController.stream;
   Stream<bool> get waterPumpStream => _waterPumpController.stream;
   Stream<bool> get lightStream => _lightsController.stream;
+  Stream<String> get lightsScheduleStream => _lightsScheduleController.stream;
   Stream<bool> get mistingStream => _mistingController.stream;
   Stream<bool> get coolingSystemStream => _coolingSystemController.stream;
 
@@ -165,6 +171,9 @@ class MqttService extends ChangeNotifier {
             }
             _lightsController.add(response);
             break;
+          case 'control/lights/schedule':
+            _lightsScheduleController.add(message);
+            break;
           case 'control/misting':
             bool response = false;
             if (message == "ON") {
@@ -243,10 +252,18 @@ class MqttService extends ChangeNotifier {
   void dispose() {
     _temperatureController.close();
     _humidityController.close();
+    _pressureController.close();
+    _dewpointController.close();
     _waterCapController.close();
     _waterTempController.close();
     _phController.close();
     _ecController.close();
+    _tdsController.close();
+    _waterPumpController.close();
+    _lightsController.close();
+    _lightsScheduleController.close();
+    _mistingController.close();
+    _coolingSystemController.close();
     super.dispose();
   }
 }

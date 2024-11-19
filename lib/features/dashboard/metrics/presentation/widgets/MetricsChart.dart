@@ -5,10 +5,12 @@ import 'package:intl/intl.dart'; // For date formatting
 
 class MetricsChart extends StatefulWidget {
   final List<Metrics> data;
+  final List<Color> gradientColors;
 
   const MetricsChart({
     super.key,
     required this.data,
+    required this.gradientColors,
   });
 
   @override
@@ -17,11 +19,7 @@ class MetricsChart extends StatefulWidget {
 
 class _MetricsChartState extends State<MetricsChart> {
   late List<Metrics> chartData;
-
-  List<Color> gradientColors = [
-    Colors.blue,
-    Colors.blueAccent,
-  ];
+  late List<Color> gradientColors;
 
   bool showAvg = false;
 
@@ -32,8 +30,8 @@ class _MetricsChartState extends State<MetricsChart> {
   @override
   void initState() {
     super.initState();
-
     chartData = widget.data;
+    gradientColors = widget.gradientColors;
   }
 
   @override
@@ -50,25 +48,7 @@ class _MetricsChartState extends State<MetricsChart> {
               bottom: 12,
             ),
             child: LineChart(
-              showAvg ? avgData() : mainData(chartData),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
-              ),
+              mainData(chartData),
             ),
           ),
         ),
@@ -84,44 +64,40 @@ class _MetricsChartState extends State<MetricsChart> {
       axisSide: meta.axisSide,
       child: Text(
         formattedDate,
-        style: const TextStyle(fontSize: 12, color: Colors.white),
+        style: TextStyle(
+            fontSize: 12, color: Theme.of(context).colorScheme.onSurface),
       ),
     );
   }
 
-  // Left titles (dynamic based on min/max values)
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(fontSize: 14, color: Colors.white);
+    var style =
+        TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurface);
 
-    // Get the max and min Y values from the data, add a fallback if empty
-    double minY = widget.data.isNotEmpty
-        ? widget.data
+    double minY = chartData.isNotEmpty
+        ? chartData
             .map((metric) => metric.value)
             .reduce((a, b) => a < b ? a : b)
         : 0.0;
-    double maxY = widget.data.isNotEmpty
-        ? widget.data
+    double maxY = chartData.isNotEmpty
+        ? chartData
             .map((metric) => metric.value)
             .reduce((a, b) => a > b ? a : b)
-        : 100.0; // Default to a reasonable max value
+        : 100.0;
 
-    // Calculate the range and intervals
     double range = maxY - minY;
     double interval = (range / 5).ceilToDouble();
 
-    // If the value is at one of the intervals, display it on the axis
     if (value % interval == 0) {
       return Text(value.toStringAsFixed(0), style: style);
     } else {
-      return Container(); // Hide labels in between intervals
+      return Container();
     }
   }
 
-  // Convert metrics to FlSpots using createdAt (timestamp) and value
   List<FlSpot> _convertMetricsToFlSpots(List<Metrics> data) {
     return data.map((metric) {
-      double x =
-          metric.createdAt.millisecondsSinceEpoch.toDouble(); // Use timestamp
+      double x = metric.createdAt.millisecondsSinceEpoch.toDouble();
       double y = metric.value;
 
       return FlSpot(x, y);
@@ -138,14 +114,12 @@ class _MetricsChartState extends State<MetricsChart> {
         maxX: 1,
         minY: 0,
         maxY: 100,
-        // Default fallback range
         lineBarsData: [],
       );
     }
 
     List<FlSpot> spots = _convertMetricsToFlSpots(data);
 
-    // Get the max and min Y values from the data
     double minY = spots.map((spot) => spot.y).reduce((a, b) => a < b ? a : b);
     double maxY = spots.map((spot) => spot.y).reduce((a, b) => a > b ? a : b);
 
@@ -221,101 +195,6 @@ class _MetricsChartState extends State<MetricsChart> {
               colors: gradientColors
                   .map((color) => color.withOpacity(0.3))
                   .toList(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-            interval: 1,
-          ),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(color: const Color(0xff37434d)),
-      ),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!,
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!,
-              ],
             ),
           ),
         ),

@@ -22,7 +22,7 @@ class LogsPage extends StatefulWidget {
 }
 
 class _LogsPageState extends State<LogsPage> {
-  bool isChartShown = true;
+  bool isChartShown = false;
   String searchQuery = '';
   LogSeverityFilter selectedSeverity = LogSeverityFilter.all;
 

@@ -18,15 +18,14 @@ class MetricsRemoteDataSourceImpl implements MetricsRemoteDataSource {
     required String table,
   }) {
     try {
-      final metricsStream =
-          supabaseClient.from(table).stream(primaryKey: ['id']);
+      final metricsStream = supabaseClient
+          .from(table)
+          .stream(primaryKey: ['id']).order('created_at', ascending: false);
 
       return metricsStream.map<List<MetricsModel>>((logList) {
         final metrics = logList
             .map<MetricsModel>((log) => MetricsModel.fromJson(log))
             .toList();
-
-        metrics.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
         return metrics;
       });

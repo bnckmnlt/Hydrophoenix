@@ -1,44 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydroponics_app/core/constants/constants.dart';
 import 'package:hydroponics_app/features/dashboard/metrics/presentation/bloc/metrics_bloc.dart';
 import 'package:hydroponics_app/features/dashboard/metrics/presentation/widgets/DataChartCard.dart';
-
-List<Map<String, Color>> chamberLabels = [
-  {
-    "Temperature": Colors.blueAccent,
-  },
-  {
-    "Humidity": Colors.lightBlueAccent,
-  },
-  {
-    "Pressure": Colors.redAccent,
-  },
-  {
-    "Dewpoint": Colors.greenAccent,
-  },
-];
-
-List<String> chamberSections = [
-  "Temperature",
-  "Humidity",
-  "Pressure",
-  "Dewpoint"
-];
-
-List<Map<String, Color>> reservoirLabels = [
-  {
-    "Water Temperature": Colors.blueAccent,
-  },
-  {
-    "Water Level": Colors.blueGrey,
-  },
-];
-
-List<String> reservoirSections = [
-  "Reservoir Temperature",
-  "Reservoir Level",
-];
 
 class MetricsPage extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (_) => const MetricsPage());
@@ -61,7 +26,10 @@ class _MetricsPageState extends State<MetricsPage> {
       "box_pressure",
       "box_temperature",
       "water_temperature",
-      "water_level"
+      "water_level",
+      "water_pH",
+      "water_EC",
+      "water_tds"
     ]));
   }
 
@@ -134,8 +102,9 @@ class _MetricsPageState extends State<MetricsPage> {
                       const SizedBox(height: 24),
                       DataChartCard(
                         title: "Chamber",
-                        labels: chamberLabels,
-                        sections: chamberSections,
+                        labels: Constants.chamberLabels,
+                        sections: Constants.chamberSections,
+                        chartColors: Constants.chartChamberColors,
                         readingsData: [
                           combinedMetrics["box_temperature"] ?? [],
                           combinedMetrics["box_humidity"] ?? [],
@@ -146,11 +115,24 @@ class _MetricsPageState extends State<MetricsPage> {
                       const SizedBox(height: 24),
                       DataChartCard(
                         title: "Reservoir",
-                        labels: reservoirLabels,
-                        sections: reservoirSections,
+                        labels: Constants.reservoirLabels,
+                        sections: Constants.reservoirSections,
+                        chartColors: Constants.chartWaterColors,
                         readingsData: [
                           combinedMetrics["water_temperature"] ?? [],
                           combinedMetrics["water_level"] ?? [],
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      DataChartCard(
+                        title: "Sensors",
+                        labels: Constants.sensorLabels,
+                        sections: Constants.sensorSections,
+                        chartColors: Constants.chartSensorColors,
+                        readingsData: [
+                          combinedMetrics["water_pH"] ?? [],
+                          combinedMetrics["water_EC"] ?? [],
+                          combinedMetrics["water_tds"] ?? [],
                         ],
                       ),
                     ],

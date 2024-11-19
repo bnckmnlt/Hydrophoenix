@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hydroponics_app/core/common/widgets/animation.dart';
-import 'package:hydroponics_app/features/details/presentation/pages/details_page.dart';
+import 'package:hydroponics_app/features/dashboard/home/presentation/pages/cooling_page.dart';
+import 'package:hydroponics_app/features/dashboard/home/presentation/pages/lights_page.dart';
+import 'package:hydroponics_app/features/dashboard/home/presentation/pages/misting_page.dart';
+import 'package:hydroponics_app/features/dashboard/home/presentation/pages/pump_page.dart';
 import 'package:hydroponics_app/mqtt_service.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 
@@ -18,7 +21,6 @@ class _QuickControlsState extends State<QuickControls>
   final MqttService mqttService = GetIt.I<MqttService>();
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   @override
@@ -89,6 +91,13 @@ class _QuickControlsState extends State<QuickControls>
       );
     }
 
+    List<Function> routes = [
+      PumpPage.route,
+      LightsPage.route,
+      MistingPage.route,
+      CoolingPage.route,
+    ];
+
     return BounceFromBottomAnimation(
       delay: 1.5,
       child: Column(
@@ -137,7 +146,7 @@ class _QuickControlsState extends State<QuickControls>
                   delay: 2,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context, DetailsPage.route());
+                      Navigator.push(context, routes[index]());
                     },
                     child: Container(
                       decoration: BoxDecoration(
